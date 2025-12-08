@@ -71,8 +71,8 @@ include __DIR__ . '/../includes/header.php';
                         <h6 class="card-subtitle mb-2">总答题数</h6>
                         <h2 class="card-title"><?php echo $stats['overall']['total_answered'] ?? 0; ?></h2>
                         <p class="card-text mb-0">
-                            <small>练习: <?php echo ($stats['overall']['total_answered'] ?? 0) - ($stats['quizs'][0]['total_questions'] ?? 0) * count($stats['quizs'] ?? []); ?></small><br>
-                            <small>测验: <?php echo ($stats['quizs'][0]['total_questions'] ?? 0) * count($stats['quizs'] ?? []); ?></small>
+                            <small>练习: <?php echo ($stats['overall']['total_answered'] ?? 0) - ($stats['quizzes'][0]['total_questions'] ?? 0) * count($stats['quizzes'] ?? []); ?></small><br>
+                            <small>测验: <?php echo ($stats['quizzes'][0]['total_questions'] ?? 0) * count($stats['quizzes'] ?? []); ?></small>
                         </p>
                     </div>
                 </div>
@@ -198,7 +198,7 @@ include __DIR__ . '/../includes/header.php';
                 <small>最近10次测验</small>
             </div>
             <div class="card-body">
-                <?php if (empty($stats['quizs'])): ?>
+                <?php if (empty($stats['quizzes'])): ?>
                     <p class="text-muted text-center py-3">暂无测验记录</p>
                 <?php else: ?>
                     <div class="table-responsive">
@@ -214,7 +214,7 @@ include __DIR__ . '/../includes/header.php';
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($stats['quizs'] as $quiz): 
+                                <?php foreach ($stats['quizzes'] as $quiz): 
                                     $startTime = strtotime($quiz['start_time']);
                                     $endTime = strtotime($quiz['end_time']);
                                     $duration = $endTime - $startTime;

@@ -221,7 +221,7 @@ include __DIR__ . '/../includes/header.php';
     // 当前答案状态
     let hasAnswer = false;
     let isSubmitted = false;
-    let currentQuestionId = {$question['id']};
+    let currentQuestionId = <?php echo $question['id']; ?>;
     
     // 处理多选题选项点击
     function toggleOption(element) {

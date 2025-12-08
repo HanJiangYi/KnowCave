@@ -42,14 +42,14 @@ class Stats {
         $byType = self::getStatsByType($userId, $bankId);
         
         // 测验记录
-        $quizs = self::getQuizHistory($userId, $bankId);
+        $quizzes = self::getQuizHistory($userId, $bankId);
         
         return [
             'overall' => $overall,
             'progress' => $progress,
             'recent' => $recent,
             'by_type' => $byType,
-            'quizs' => $quizs
+            'quizzes' => $quizzes
         ];
     }
     
