@@ -21,9 +21,9 @@ if (!$examId || !$questionId) {
 }
 
 try {
-    // 检查是否有进行中的考试
+    // 检查是否有进行中的测验
     if (!isset($_SESSION['current_exam']) || $_SESSION['current_exam']['exam_id'] != $examId) {
-        throw new Exception('考试会话不存在');
+        throw new Exception('测验会话不存在');
     }
     
     $marked = &$_SESSION['current_exam']['marked'];

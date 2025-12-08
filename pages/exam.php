@@ -22,11 +22,11 @@ if (!$bank) {
     exit;
 }
 
-// 检查是否已有进行中的考试
+// 检查是否已有进行中的测验
 if (isset($_SESSION['current_exam']) && $_SESSION['current_exam']['bank_id'] == $bankId) {
     $exam = $_SESSION['current_exam'];
 } else {
-    // 开始新考试
+    // 开始新测验
     $result = ExamManager::startExam($_SESSION['user_id'], $bankId);
     if (isset($result['error'])) {
         die("<script>alert('{$result['error']}'); window.location.href='dashboard.php';</script>");
@@ -44,7 +44,7 @@ $isMultiple = ($currentQuestion['type'] == 2);
 $currentAnswer = $exam['answers'][$currentQuestion['id']] ?? '';
 $isMarked = in_array($currentQuestion['id'], $exam['marked']);
 
-$pageTitle = '考试模式 - ' . htmlspecialchars($bank['name']);
+$pageTitle = '测验模式 - ' . htmlspecialchars($bank['name']);
 
 $pageStyles = <<<HTML
 <style>
@@ -87,12 +87,12 @@ HTML;
 include __DIR__ . '/../includes/header.php';
 ?>
 
-<!-- 考试计时器 -->
+<!-- 测验计时器 -->
 <div class="bg-dark text-white py-2">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-3">
-                <span class="badge bg-danger">考试模式</span> - <strong><?php echo htmlspecialchars($bank['name']); ?></strong>
+                <span class="badge bg-danger">测验模式</span> - <strong><?php echo htmlspecialchars($bank['name']); ?></strong>
             </div>
             <div class="col-md-3 text-center">
                 剩余时间: <span id="timer" class="fw-bold">30:00</span>
@@ -266,12 +266,12 @@ include __DIR__ . '/../includes/header.php';
                 </div>
             </div>
             
-            <!-- 考试说明 -->
+            <!-- 测验说明 -->
             <div class="card mt-4">
                 <div class="card-body">
-                    <h6>考试规则：</h6>
+                    <h6>测验规则：</h6>
                     <ul class="mb-0">
-                        <li>考试时间：30分钟，时间到自动交卷</li>
+                        <li>测验时间：30分钟，时间到自动交卷</li>
                         <li>题目数量：20题（单选、多选、判断）</li>
                         <li>可以标记题目以便复查</li>
                     </ul>
@@ -321,7 +321,7 @@ include __DIR__ . '/../includes/header.php';
         bankName: "<?php echo htmlspecialchars($bank['name']); ?>"
     };
 
-    // 考试计时器
+    // 测验计时器
     let totalSeconds = examConfig.remainingTime;
     
     function updateTimer() {
@@ -339,7 +339,7 @@ include __DIR__ . '/../includes/header.php';
         
         // 最后5分钟提示
         if (totalSeconds === 300) {
-            alert('考试还剩最后5分钟！');
+            alert('测验还剩最后5分钟！');
         }
     }
     
@@ -636,8 +636,8 @@ include __DIR__ . '/../includes/header.php';
     function handleBeforeUnload(e) {
         // 取消事件，显示标准提示
         e.preventDefault();
-        e.returnValue = '考试正在进行中，确定要离开吗？';
-        return '考试正在进行中，确定要离开吗？';
+        e.returnValue = '测验正在进行中，确定要离开吗？';
+        return '测验正在进行中，确定要离开吗？';
     }
     
     // 初始化事件监听

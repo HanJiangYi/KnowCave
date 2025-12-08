@@ -8,13 +8,13 @@ class ExamManager {
     public static function startExam($userId, $bankId, $questionCount = 20, $timeLimit = 1800) {
         $pdo = Database::getConnection();
         
-        // 获取考试题目
+        // 获取测验题目
         $questions = QuestionPicker::getExamQuestions($bankId, $questionCount);
         if (isset($questions['error'])) {
             return $questions;
         }
         
-        // 创建考试会话
+        // 创建测验会话
         $stmt = $pdo->prepare("
             INSERT INTO exam_sessions 
             (user_id, bank_id, time_limit, total_questions, status) 
@@ -56,7 +56,7 @@ class ExamManager {
     
     public static function submitAnswer($examId, $questionId, $answer) {
         if (!isset($_SESSION['current_exam']) || $_SESSION['current_exam']['exam_id'] != $examId) {
-            return ['error' => '考试会话不存在'];
+            return ['error' => '测验会话不存在'];
         }
         
         $_SESSION['current_exam']['answers'][$questionId] = $answer;
@@ -79,7 +79,7 @@ class ExamManager {
     
     public static function finishExam($userId, $examId) {
         if (!isset($_SESSION['current_exam']) || $_SESSION['current_exam']['exam_id'] != $examId) {
-            return ['error' => '考试会话不存在'];
+            return ['error' => '测验会话不存在'];
         }
         
         $exam = $_SESSION['current_exam'];
@@ -108,7 +108,7 @@ class ExamManager {
                 $exam['bank_id'],
                 $userAnswer,
                 $isCorrect,
-                2, // 考试模式
+                2, // 测验模式
                 0
             );
             
@@ -127,7 +127,7 @@ class ExamManager {
             ];
         }
         
-        // 更新考试会话
+        // 更新测验会话
         $endTime = time();
         $timeSpent = $endTime - $exam['start_time'];
         

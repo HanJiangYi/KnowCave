@@ -8,7 +8,7 @@ if (!$examId) {
     exit;
 }
 
-$pageTitle = '考试结果 - 知识洞天 KnowCave';
+$pageTitle = '测验结果 - 知识洞天 KnowCave';
 
 include __DIR__ . '/../includes/header.php';
 ?>
@@ -28,18 +28,18 @@ include __DIR__ . '/../includes/header.php';
         <div class="col-lg-8">
             <div class="card text-center mb-4">
                 <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">考试完成</h4>
+                    <h4 class="mb-0">测验完成</h4>
                 </div>
                 <div class="card-body py-5">
                     <div class="display-1 mb-4">🎉</div>
-                    <h2 class="card-title">考试提交成功！</h2>
-                    <p class="card-text text-muted">你的考试答卷已提交，成绩正在计算中...</p>
+                    <h2 class="card-title">测验提交成功！</h2>
+                    <p class="card-text text-muted">你的测验答卷已提交，成绩正在计算中...</p>
                     
                     <div class="row mt-4">
                         <div class="col-md-3">
                             <div class="card bg-light">
                                 <div class="card-body">
-                                    <h6 class="card-subtitle mb-2">考试ID</h6>
+                                    <h6 class="card-subtitle mb-2">测验ID</h6>
                                     <h4 class="card-title">#<?php echo $examId; ?></h4>
                                 </div>
                             </div>
@@ -63,7 +63,7 @@ include __DIR__ . '/../includes/header.php';
                         <div class="col-md-3">
                             <div class="card bg-light">
                                 <div class="card-body">
-                                    <h6 class="card-subtitle mb-2">考试日期</h6>
+                                    <h6 class="card-subtitle mb-2">测验日期</h6>
                                     <h4 class="card-title"><?php echo date('m/d'); ?></h4>
                                 </div>
                             </div>
@@ -87,16 +87,16 @@ include __DIR__ . '/../includes/header.php';
             
             <div class="card">
                 <div class="card-header bg-light">
-                    <h5 class="mb-0">📝 考试回顾</h5>
+                    <h5 class="mb-0">📝 测验回顾</h5>
                 </div>
                 <div class="card-body">
-                    <p class="text-muted">考试详细结果和分析将在批改完成后显示在这里。</p>
+                    <p class="text-muted">测验详细结果和分析将在批改完成后显示在这里。</p>
                     <p>你可以：</p>
                     <ul>
                         <li>查看每道题的正确答案和解析</li>
                         <li>了解自己的知识薄弱点</li>
-                        <li>查看本次考试的时间使用情况</li>
-                        <li>与历史考试成绩对比</li>
+                        <li>查看本次测验的时间使用情况</li>
+                        <li>与历史测验成绩对比</li>
                     </ul>
                 </div>
             </div>

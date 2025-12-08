@@ -23,9 +23,9 @@ if (!$examId || !$userId) {
 }
 
 try {
-    // 检查是否有进行中的考试
+    // 检查是否有进行中的测验
     if (!isset($_SESSION['current_exam']) || $_SESSION['current_exam']['exam_id'] != $examId) {
-        throw new Exception('考试会话不存在');
+        throw new Exception('测验会话不存在');
     }
     
     $exam = $_SESSION['current_exam'];
@@ -57,12 +57,12 @@ try {
             $exam['bank_id'],
             $userAnswer,
             $isCorrect,
-            2, // 考试模式
+            2, // 测验模式
             0
         );
     }
     
-    // 更新考试会话状态
+    // 更新测验会话状态
     $endTime = date('Y-m-d H:i:s');
     $timeSpent = time() - $exam['start_time'];
     
@@ -73,7 +73,7 @@ try {
     ");
     $stmt->execute([$endTime, $correct, $examId]);
     
-    // 清除session中的考试数据
+    // 清除session中的测验数据
     unset($_SESSION['current_exam']);
     
     // 返回结果

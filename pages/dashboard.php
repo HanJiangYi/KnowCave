@@ -110,7 +110,7 @@ include __DIR__ . '/../includes/header.php';
                                 <div class="mb-3">
                                     <span class="badge bg-primary"><?php echo $bank['question_count']; ?> 题</span>
                                     <?php if ($bank['question_count'] < 20): ?>
-                                        <span class="badge bg-warning ms-1">考试需20题</span>
+                                        <span class="badge bg-warning ms-1">测验需20题</span>
                                     <?php endif; ?>
                                 </div>
                                 <div class="d-grid gap-2">
@@ -119,9 +119,9 @@ include __DIR__ . '/../includes/header.php';
                                     <a href="exam.php?bank_id=<?php echo $bank['id']; ?>" 
                                        class="btn btn-primary <?php echo $bank['question_count'] < 20 ? 'disabled' : ''; ?>"
                                        <?php if ($bank['question_count'] < 20): ?>
-                                       title="该题库题目不足20题，无法进行考试"
+                                       title="该题库题目不足20题，无法进行测验"
                                        <?php endif; ?>>
-                                       开始考试 (30分钟)
+                                       开始测验 (30分钟)
                                     </a>
                                 </div>
                             </div>

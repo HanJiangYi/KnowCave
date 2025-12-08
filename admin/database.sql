@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS answer_records (
     bank_id INTEGER NOT NULL,
     user_answer TEXT,
     is_correct BOOLEAN,
-    mode INTEGER NOT NULL, -- 1: 练习， 2: 考试
+    mode INTEGER NOT NULL, -- 1: 练习， 2: 测验
     time_spent INTEGER DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id),
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS answer_records (
     FOREIGN KEY (bank_id) REFERENCES question_banks (id)
 );
 
--- 考试会话表（记录整场考试）
+-- 测验会话表（记录整场测验）
 CREATE TABLE IF NOT EXISTS exam_sessions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,

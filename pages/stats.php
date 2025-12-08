@@ -72,7 +72,7 @@ include __DIR__ . '/../includes/header.php';
                         <h2 class="card-title"><?php echo $stats['overall']['total_answered'] ?? 0; ?></h2>
                         <p class="card-text mb-0">
                             <small>练习: <?php echo ($stats['overall']['total_answered'] ?? 0) - ($stats['exams'][0]['total_questions'] ?? 0) * count($stats['exams'] ?? []); ?></small><br>
-                            <small>考试: <?php echo ($stats['exams'][0]['total_questions'] ?? 0) * count($stats['exams'] ?? []); ?></small>
+                            <small>测验: <?php echo ($stats['exams'][0]['total_questions'] ?? 0) * count($stats['exams'] ?? []); ?></small>
                         </p>
                     </div>
                 </div>
@@ -191,21 +191,21 @@ include __DIR__ . '/../includes/header.php';
             </div>
         </div>
         
-        <!-- 考试记录 -->
+        <!-- 测验记录 -->
         <div class="card mb-4">
             <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">📝 考试记录</h5>
-                <small>最近10次考试</small>
+                <h5 class="mb-0">📝 测验记录</h5>
+                <small>最近10次测验</small>
             </div>
             <div class="card-body">
                 <?php if (empty($stats['exams'])): ?>
-                    <p class="text-muted text-center py-3">暂无考试记录</p>
+                    <p class="text-muted text-center py-3">暂无测验记录</p>
                 <?php else: ?>
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>考试时间</th>
+                                    <th>测验时间</th>
                                     <th>题库</th>
                                     <th>题目数</th>
                                     <th>正确数</th>
@@ -272,7 +272,7 @@ include __DIR__ . '/../includes/header.php';
                             <ul>
                                 <li>重点复习错误率较高的题型</li>
                                 <li>每天坚持练习，保持学习节奏</li>
-                                <li>参加模拟考试检验学习效果</li>
+                                <li>参加模拟测验检验学习效果</li>
                             </ul>
                           </div>';
                 } else {
@@ -295,7 +295,7 @@ include __DIR__ . '/../includes/header.php';
                         <ol>
                             <li>完成剩余的 <?php echo max(0, $stats['progress']['total'] - $stats['progress']['answered']); ?> 道新题</li>
                             <li>复习错题本中的 <?php echo $stats['overall']['total_wrong'] ?? 0; ?> 道错题</li>
-                            <li>每周至少参加1次模拟考试</li>
+                            <li>每周至少参加1次模拟测验</li>
                         </ol>
                     </div>
                     <div class="col-md-6">

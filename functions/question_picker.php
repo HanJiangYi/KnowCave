@@ -99,7 +99,7 @@ class QuestionPicker {
             return ['error' => "题库题目不足，需要{$count}题，当前只有{$result['total']}题"];
         }
         
-        // 随机抽取考试题目
+        // 随机抽取测验题目
         $stmt = $pdo->prepare("
             SELECT * FROM questions 
             WHERE bank_id = ? 

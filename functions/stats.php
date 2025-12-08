@@ -41,7 +41,7 @@ class Stats {
         // 各题型统计
         $byType = self::getStatsByType($userId, $bankId);
         
-        // 考试记录
+        // 测验记录
         $exams = self::getExamHistory($userId, $bankId);
         
         return [
