@@ -71,8 +71,8 @@ include __DIR__ . '/../includes/header.php';
                         <h6 class="card-subtitle mb-2">总答题数</h6>
                         <h2 class="card-title"><?php echo $stats['overall']['total_answered'] ?? 0; ?></h2>
                         <p class="card-text mb-0">
-                            <small>练习: <?php echo ($stats['overall']['total_answered'] ?? 0) - ($stats['exams'][0]['total_questions'] ?? 0) * count($stats['exams'] ?? []); ?></small><br>
-                            <small>测验: <?php echo ($stats['exams'][0]['total_questions'] ?? 0) * count($stats['exams'] ?? []); ?></small>
+                            <small>练习: <?php echo ($stats['overall']['total_answered'] ?? 0) - ($stats['quizs'][0]['total_questions'] ?? 0) * count($stats['quizs'] ?? []); ?></small><br>
+                            <small>测验: <?php echo ($stats['quizs'][0]['total_questions'] ?? 0) * count($stats['quizs'] ?? []); ?></small>
                         </p>
                     </div>
                 </div>
@@ -177,8 +177,8 @@ include __DIR__ . '/../includes/header.php';
                                         <td><?php echo $day['correct']; ?></td>
                                         <td>
                                             <?php echo $day['total'] > 0 ? round(($day['correct'] / $day['total']) * 100, 1) : 0; ?>%
-                                            <?php if ($day['exam_questions'] > 0): ?>
-                                            <span class="badge bg-info ms-1">考<?php echo $day['exam_questions']; ?></span>
+                                            <?php if ($day['quiz_questions'] > 0): ?>
+                                            <span class="badge bg-info ms-1">考<?php echo $day['quiz_questions']; ?></span>
                                             <?php endif; ?>
                                         </td>
                                     </tr>
@@ -198,7 +198,7 @@ include __DIR__ . '/../includes/header.php';
                 <small>最近10次测验</small>
             </div>
             <div class="card-body">
-                <?php if (empty($stats['exams'])): ?>
+                <?php if (empty($stats['quizs'])): ?>
                     <p class="text-muted text-center py-3">暂无测验记录</p>
                 <?php else: ?>
                     <div class="table-responsive">
@@ -214,9 +214,9 @@ include __DIR__ . '/../includes/header.php';
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($stats['exams'] as $exam): 
-                                    $startTime = strtotime($exam['start_time']);
-                                    $endTime = strtotime($exam['end_time']);
+                                <?php foreach ($stats['quizs'] as $quiz): 
+                                    $startTime = strtotime($quiz['start_time']);
+                                    $endTime = strtotime($quiz['end_time']);
                                     $duration = $endTime - $startTime;
                                     $durationStr = $duration > 3600 
                                         ? floor($duration/3600) . '小时' . floor(($duration%3600)/60) . '分'
@@ -224,15 +224,15 @@ include __DIR__ . '/../includes/header.php';
                                 ?>
                                 <tr>
                                     <td><?php echo date('m/d H:i', $startTime); ?></td>
-                                    <td><?php echo htmlspecialchars($exam['bank_name']); ?></td>
-                                    <td><?php echo $exam['total_questions']; ?></td>
+                                    <td><?php echo htmlspecialchars($quiz['bank_name']); ?></td>
+                                    <td><?php echo $quiz['total_questions']; ?></td>
                                     <td>
-                                        <?php echo $exam['correct_count']; ?>
-                                        <small class="text-muted">/<?php echo $exam['total_questions']; ?></small>
+                                        <?php echo $quiz['correct_count']; ?>
+                                        <small class="text-muted">/<?php echo $quiz['total_questions']; ?></small>
                                     </td>
                                     <td>
-                                        <span class="badge <?php echo $exam['score'] >= 60 ? 'bg-success' : 'bg-danger'; ?>">
-                                            <?php echo $exam['score']; ?>%
+                                        <span class="badge <?php echo $quiz['score'] >= 60 ? 'bg-success' : 'bg-danger'; ?>">
+                                            <?php echo $quiz['score']; ?>%
                                         </span>
                                     </td>
                                     <td><?php echo $durationStr; ?></td>

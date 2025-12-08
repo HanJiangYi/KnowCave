@@ -87,7 +87,7 @@ class QuestionPicker {
         return $stmt->execute([$userId, $questionId, $bankId, $userAnswer, $isCorrect ? 1 : 0, $mode, $timeSpent]);
     }
     
-    public static function getExamQuestions($bankId, $count = 20) {
+    public static function getQuizQuestions($bankId, $count = 20) {
         $pdo = Database::getConnection();
         
         // 检查题目数量是否足够

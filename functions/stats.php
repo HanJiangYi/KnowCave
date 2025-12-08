@@ -42,14 +42,14 @@ class Stats {
         $byType = self::getStatsByType($userId, $bankId);
         
         // 测验记录
-        $exams = self::getExamHistory($userId, $bankId);
+        $quizs = self::getQuizHistory($userId, $bankId);
         
         return [
             'overall' => $overall,
             'progress' => $progress,
             'recent' => $recent,
             'by_type' => $byType,
-            'exams' => $exams
+            'quizs' => $quizs
         ];
     }
     
@@ -104,7 +104,7 @@ class Stats {
             DATE(ar.created_at) as date,
             COUNT(*) as total,
             SUM(CASE WHEN ar.is_correct = 1 THEN 1 ELSE 0 END) as correct,
-            SUM(CASE WHEN ar.mode = 2 THEN 1 ELSE 0 END) as exam_questions
+            SUM(CASE WHEN ar.mode = 2 THEN 1 ELSE 0 END) as quiz_questions
         FROM answer_records ar
         $where
         GROUP BY DATE(ar.created_at)
@@ -147,7 +147,7 @@ class Stats {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
-    private static function getExamHistory($userId, $bankId = null) {
+    private static function getQuizHistory($userId, $bankId = null) {
         $pdo = Database::getConnection();
         
         $where = "WHERE es.user_id = :user_id AND es.status = 2";
@@ -168,7 +168,7 @@ class Stats {
             es.time_limit,
             ROUND((es.correct_count * 1.0 / es.total_questions) * 100, 1) as score,
             b.name as bank_name
-        FROM exam_sessions es
+        FROM quiz_sessions es
         JOIN question_banks b ON es.bank_id = b.id
         $where
         ORDER BY es.start_time DESC

@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS answer_records (
 );
 
 -- 测验会话表（记录整场测验）
-CREATE TABLE IF NOT EXISTS exam_sessions (
+CREATE TABLE IF NOT EXISTS quiz_sessions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     bank_id INTEGER NOT NULL,
@@ -66,4 +66,4 @@ CREATE TABLE IF NOT EXISTS exam_sessions (
 CREATE INDEX IF NOT EXISTS idx_records_user_question ON answer_records (user_id, question_id, mode);
 CREATE INDEX IF NOT EXISTS idx_records_created ON answer_records (user_id, bank_id, created_at);
 CREATE INDEX IF NOT EXISTS idx_questions_bank ON questions (bank_id, type);
-CREATE INDEX IF NOT EXISTS idx_exam_sessions_user ON exam_sessions (user_id, status);
+CREATE INDEX IF NOT EXISTS idx_quiz_sessions_user ON quiz_sessions (user_id, status);

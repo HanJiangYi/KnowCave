@@ -12,21 +12,21 @@ if (!Auth::isLoggedIn()) {
 }
 
 $data = json_decode(file_get_contents('php://input'), true);
-$examId = $data['exam_id'] ?? 0;
+$quizId = $data['quiz_id'] ?? 0;
 $questionId = $data['question_id'] ?? 0;
 
-if (!$examId || !$questionId) {
+if (!$quizId || !$questionId) {
     echo json_encode(['success' => false, 'error' => '参数错误']);
     exit;
 }
 
 try {
     // 检查是否有进行中的测验
-    if (!isset($_SESSION['current_exam']) || $_SESSION['current_exam']['exam_id'] != $examId) {
+    if (!isset($_SESSION['current_quiz']) || $_SESSION['current_quiz']['quiz_id'] != $quizId) {
         throw new Exception('测验会话不存在');
     }
     
-    $marked = &$_SESSION['current_exam']['marked'];
+    $marked = &$_SESSION['current_quiz']['marked'];
     
     // 切换标记状态
     $index = array_search($questionId, $marked);

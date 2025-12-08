@@ -27,7 +27,7 @@ echo "</pre>";
 
 // 测试页面加载
 echo "<h3>测试页面加载</h3>";
-$test_pages = ['pages/login.php', 'pages/dashboard.php', 'pages/exam.php'];
+$test_pages = ['pages/login.php', 'pages/dashboard.php', 'pages/quiz.php'];
 foreach ($test_pages as $page) {
     if (file_exists($page)) {
         echo "✅ $page 存在<br>";

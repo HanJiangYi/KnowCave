@@ -116,7 +116,7 @@ include __DIR__ . '/../includes/header.php';
                                 <div class="d-grid gap-2">
                                     <a href="practice.php?bank_id=<?php echo $bank['id']; ?>" 
                                        class="btn btn-outline-primary">开始练习</a>
-                                    <a href="exam.php?bank_id=<?php echo $bank['id']; ?>" 
+                                    <a href="quiz.php?bank_id=<?php echo $bank['id']; ?>" 
                                        class="btn btn-primary <?php echo $bank['question_count'] < 20 ? 'disabled' : ''; ?>"
                                        <?php if ($bank['question_count'] < 20): ?>
                                        title="该题库题目不足20题，无法进行测验"

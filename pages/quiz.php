@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../functions/auth.php';
-require_once __DIR__ . '/../functions/exam.php';
+require_once __DIR__ . '/../functions/quiz.php';
 require_once __DIR__ . '/../config/db.php';
 
 Auth::requireLogin();
@@ -23,26 +23,26 @@ if (!$bank) {
 }
 
 // 检查是否已有进行中的测验
-if (isset($_SESSION['current_exam']) && $_SESSION['current_exam']['bank_id'] == $bankId) {
-    $exam = $_SESSION['current_exam'];
+if (isset($_SESSION['current_quiz']) && $_SESSION['current_quiz']['bank_id'] == $bankId) {
+    $quiz = $_SESSION['current_quiz'];
 } else {
     // 开始新测验
-    $result = ExamManager::startExam($_SESSION['user_id'], $bankId);
+    $result = QuizManager::startQuiz($_SESSION['user_id'], $bankId);
     if (isset($result['error'])) {
         die("<script>alert('{$result['error']}'); window.location.href='dashboard.php';</script>");
     }
-    $exam = $_SESSION['current_exam'];
+    $quiz = $_SESSION['current_quiz'];
 }
 
 $currentQuestionIndex = $_GET['question'] ?? 1;
-$totalQuestions = count($exam['questions']);
+$totalQuestions = count($quiz['questions']);
 $currentQuestionIndex = max(1, min($currentQuestionIndex, $totalQuestions));
-$currentQuestion = $exam['questions'][$currentQuestionIndex - 1];
+$currentQuestion = $quiz['questions'][$currentQuestionIndex - 1];
 
 $options = $currentQuestion['options'];
 $isMultiple = ($currentQuestion['type'] == 2);
-$currentAnswer = $exam['answers'][$currentQuestion['id']] ?? '';
-$isMarked = in_array($currentQuestion['id'], $exam['marked']);
+$currentAnswer = $quiz['answers'][$currentQuestion['id']] ?? '';
+$isMarked = in_array($currentQuestion['id'], $quiz['marked']);
 
 $pageTitle = '测验模式 - ' . htmlspecialchars($bank['name']);
 
@@ -98,7 +98,7 @@ include __DIR__ . '/../includes/header.php';
                 剩余时间: <span id="timer" class="fw-bold">30:00</span>
             </div>
             <div class="col-md-6 text-end">
-                <button class="btn btn-sm btn-danger" onclick="submitExam()">交卷</button>
+                <button class="btn btn-sm btn-danger" onclick="submitQuiz()">交卷</button>
             </div>
         </div>
     </div>
@@ -115,10 +115,10 @@ include __DIR__ . '/../includes/header.php';
                 <div class="card-body">
                     <div class="question-nav">
                         <?php for ($i = 1; $i <= $totalQuestions; $i++): 
-                            $questionId = $exam['questions'][$i-1]['id'];
-                            $isAnswered = !empty($exam['answers'][$questionId]);
+                            $questionId = $quiz['questions'][$i-1]['id'];
+                            $isAnswered = !empty($quiz['answers'][$questionId]);
                             $isCurrent = ($i == $currentQuestionIndex);
-                            $isMarkedQ = in_array($questionId, $exam['marked']);
+                            $isMarkedQ = in_array($questionId, $quiz['marked']);
                         ?>
                         <a href="?bank_id=<?php echo $bankId; ?>&question=<?php echo $i; ?>"
                            class="question-nav-item 
@@ -149,11 +149,11 @@ include __DIR__ . '/../includes/header.php';
                     <div class="mb-3">
                         <div class="progress" style="height: 20px;">
                             <div class="progress-bar" role="progressbar" 
-                                 style="width: <?php echo (count(array_filter($exam['answers'])) / $totalQuestions) * 100; ?>%">
+                                 style="width: <?php echo (count(array_filter($quiz['answers'])) / $totalQuestions) * 100; ?>%">
                             </div>
                         </div>
                         <small class="text-muted">
-                            进度: <?php echo count(array_filter($exam['answers'])); ?>/<?php echo $totalQuestions; ?>
+                            进度: <?php echo count(array_filter($quiz['answers'])); ?>/<?php echo $totalQuestions; ?>
                         </small>
                     </div>
                     <div class="d-grid gap-2">
@@ -192,7 +192,7 @@ include __DIR__ . '/../includes/header.php';
                     </h5>
                     
                     <form id="answerForm">
-                        <input type="hidden" name="exam_id" value="<?php echo $exam['exam_id']; ?>">
+                        <input type="hidden" name="quiz_id" value="<?php echo $quiz['quiz_id']; ?>">
                         <input type="hidden" name="question_id" value="<?php echo $currentQuestion['id']; ?>">
                         
                         <div class="options-list mb-4">
@@ -293,13 +293,13 @@ include __DIR__ . '/../includes/header.php';
                 <p>你确定要交卷吗？交卷后将无法修改答案。</p>
                 <div class="alert alert-info">
                     <strong>答题情况：</strong><br>
-                    已完成：<span id="answeredCount"><?php echo count(array_filter($exam['answers'])); ?></span>/<?php echo $totalQuestions; ?> 题<br>
-                    已标记：<span id="markedCount"><?php echo count($exam['marked']); ?></span> 题
+                    已完成：<span id="answeredCount"><?php echo count(array_filter($quiz['answers'])); ?></span>/<?php echo $totalQuestions; ?> 题<br>
+                    已标记：<span id="markedCount"><?php echo count($quiz['marked']); ?></span> 题
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">继续答题</button>
-                <button type="button" class="btn btn-danger" onclick="doSubmitExam()">确认交卷</button>
+                <button type="button" class="btn btn-danger" onclick="doSubmitQuiz()">确认交卷</button>
             </div>
         </div>
     </div>
@@ -307,27 +307,27 @@ include __DIR__ . '/../includes/header.php';
 
 <script>
     // 将PHP变量输出到JavaScript
-    const examConfig = {
+    const quizConfig = {
         bankId: <?php echo $bankId; ?>,
         currentQuestionId: <?php echo $currentQuestion['id']; ?>,
-        examId: <?php echo $exam['exam_id']; ?>,
+        quizId: <?php echo $quiz['quiz_id']; ?>,
         currentQuestionIndex: <?php echo $currentQuestionIndex; ?>,
         totalQuestions: <?php echo $totalQuestions; ?>,
         isMultiple: <?php echo $isMultiple ? 'true' : 'false'; ?>,
         userId: <?php echo $_SESSION['user_id']; ?>,
-        remainingTime: <?php echo ExamManager::getRemainingTime($exam['exam_id']); ?>,
-        answeredCount: <?php echo count(array_filter($exam['answers'])); ?>,
-        markedCount: <?php echo count($exam['marked']); ?>,
+        remainingTime: <?php echo QuizManager::getRemainingTime($quiz['quiz_id']); ?>,
+        answeredCount: <?php echo count(array_filter($quiz['answers'])); ?>,
+        markedCount: <?php echo count($quiz['marked']); ?>,
         bankName: "<?php echo htmlspecialchars($bank['name']); ?>"
     };
 
     // 测验计时器
-    let totalSeconds = examConfig.remainingTime;
+    let totalSeconds = quizConfig.remainingTime;
     
     function updateTimer() {
         if (totalSeconds <= 0) {
             clearInterval(timerInterval);
-            submitExam(true);
+            submitQuiz(true);
             return;
         }
         
@@ -380,13 +380,13 @@ include __DIR__ . '/../includes/header.php';
     
     // 保存答案
     async function saveAnswer() {
-        const questionId = examConfig.currentQuestionId;
-        const examId = examConfig.examId;
+        const questionId = quizConfig.currentQuestionId;
+        const quizId = quizConfig.quizId;
         
         // 收集当前题目的答案
         let answer = '';
         
-        if (examConfig.isMultiple) {
+        if (quizConfig.isMultiple) {
             // 多选题
             const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
             const values = Array.from(checkboxes).map(cb => cb.value).sort();
@@ -398,13 +398,13 @@ include __DIR__ . '/../includes/header.php';
         }
         
         try {
-            const response = await fetch('../api/save_exam_answer.php', {
+            const response = await fetch('../api/save_quiz_answer.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    exam_id: examId,
+                    quiz_id: quizId,
                     question_id: questionId,
                     answer: answer
                 })
@@ -427,7 +427,7 @@ include __DIR__ . '/../includes/header.php';
     // 更新答题状态和左侧进度
     function updateAnswerStatus(answer) {
         // 获取当前题目的导航项
-        const navItem = document.querySelector(`a[href="?bank_id=${examConfig.bankId}&question=${examConfig.currentQuestionIndex}"]`);
+        const navItem = document.querySelector(`a[href="?bank_id=${quizConfig.bankId}&question=${quizConfig.currentQuestionIndex}"]`);
         
         // 检查当前题目之前是否有答案
         const hadAnswer = navItem.classList.contains('answered');
@@ -436,14 +436,14 @@ include __DIR__ . '/../includes/header.php';
             // 如果有新答案
             if (!hadAnswer) {
                 // 之前没有答案，现在有答案，增加计数
-                examConfig.answeredCount++;
+                quizConfig.answeredCount++;
                 navItem.classList.add('answered');
             }
         } else {
             // 如果清除了答案
             if (hadAnswer) {
                 // 之前有答案，现在清除了，减少计数
-                examConfig.answeredCount--;
+                quizConfig.answeredCount--;
                 navItem.classList.remove('answered');
             }
         }
@@ -455,18 +455,18 @@ include __DIR__ . '/../includes/header.php';
     // 更新左侧进度显示
     function updateLeftProgress() {
         // 更新进度条
-        const progress = (examConfig.answeredCount / examConfig.totalQuestions) * 100;
+        const progress = (quizConfig.answeredCount / quizConfig.totalQuestions) * 100;
         document.querySelector('.progress-bar').style.width = progress + '%';
         
         // 更新进度文本
         const progressText = document.querySelector('.progress-bar').closest('.mb-3').querySelector('small.text-muted');
-        progressText.textContent = `进度: ${examConfig.answeredCount}/${examConfig.totalQuestions}`;
+        progressText.textContent = `进度: ${quizConfig.answeredCount}/${quizConfig.totalQuestions}`;
     }
     
     // 标记题目
     async function toggleMark() {
-        const questionId = examConfig.currentQuestionId;
-        const examId = examConfig.examId;
+        const questionId = quizConfig.currentQuestionId;
+        const quizId = quizConfig.quizId;
         
         try {
             const response = await fetch('../api/mark_question.php', {
@@ -475,7 +475,7 @@ include __DIR__ . '/../includes/header.php';
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    exam_id: examId,
+                    quiz_id: quizId,
                     question_id: questionId
                 })
             });
@@ -493,19 +493,19 @@ include __DIR__ . '/../includes/header.php';
                 }
                 
                 // 更新导航标记
-                const navItem = document.querySelector(`a[href="?bank_id=${examConfig.bankId}&question=${examConfig.currentQuestionIndex}"]`);
+                const navItem = document.querySelector(`a[href="?bank_id=${quizConfig.bankId}&question=${quizConfig.currentQuestionIndex}"]`);
                 if (navItem) {
                     if (isMarked) {
                         navItem.classList.remove('marked');
-                        examConfig.markedCount--;
+                        quizConfig.markedCount--;
                     } else {
                         navItem.classList.add('marked');
-                        examConfig.markedCount++;
+                        quizConfig.markedCount++;
                     }
                 }
                 
                 // 更新标记计数
-                document.getElementById('markedCount').textContent = examConfig.markedCount;
+                document.getElementById('markedCount').textContent = quizConfig.markedCount;
             }
         } catch (error) {
             console.error('标记题目失败:', error);
@@ -536,9 +536,9 @@ include __DIR__ . '/../includes/header.php';
     function prevQuestion() {
         // 暂时移除beforeunload事件，避免导航时弹出提示
         window.removeEventListener('beforeunload', handleBeforeUnload);
-        const current = examConfig.currentQuestionIndex;
+        const current = quizConfig.currentQuestionIndex;
         if (current > 1) {
-            window.location.href = `?bank_id=${examConfig.bankId}&question=${current - 1}`;
+            window.location.href = `?bank_id=${quizConfig.bankId}&question=${current - 1}`;
         } else {
             // 重新添加事件监听
             window.addEventListener('beforeunload', handleBeforeUnload);
@@ -548,10 +548,10 @@ include __DIR__ . '/../includes/header.php';
     function nextQuestion() {
         // 暂时移除beforeunload事件，避免导航时弹出提示
         window.removeEventListener('beforeunload', handleBeforeUnload);
-        const current = examConfig.currentQuestionIndex;
-        const total = examConfig.totalQuestions;
+        const current = quizConfig.currentQuestionIndex;
+        const total = quizConfig.totalQuestions;
         if (current < total) {
-            window.location.href = `?bank_id=${examConfig.bankId}&question=${current + 1}`;
+            window.location.href = `?bank_id=${quizConfig.bankId}&question=${current + 1}`;
         } else {
             // 重新添加事件监听
             window.addEventListener('beforeunload', handleBeforeUnload);
@@ -559,20 +559,20 @@ include __DIR__ . '/../includes/header.php';
     }
     
     // 交卷
-    function submitExam(auto = false) {
+    function submitQuiz(auto = false) {
         if (auto) {
-            doSubmitExam();
+            doSubmitQuiz();
         } else {
             // 更新计数
-            document.getElementById('answeredCount').textContent = examConfig.answeredCount;
-            document.getElementById('markedCount').textContent = examConfig.markedCount;
+            document.getElementById('answeredCount').textContent = quizConfig.answeredCount;
+            document.getElementById('markedCount').textContent = quizConfig.markedCount;
             
             const modal = new bootstrap.Modal(document.getElementById('submitModal'));
             modal.show();
         }
     }
     
-    async function doSubmitExam() {
+    async function doSubmitQuiz() {
         try {
             // 显示加载状态
             Swal.fire({
@@ -585,14 +585,14 @@ include __DIR__ . '/../includes/header.php';
                 }
             });
             
-            const response = await fetch('../api/submit_exam.php', {
+            const response = await fetch('../api/submit_quiz.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    exam_id: examConfig.examId,
-                    user_id: examConfig.userId
+                    quiz_id: quizConfig.quizId,
+                    user_id: quizConfig.userId
                 })
             });
             
@@ -612,7 +612,7 @@ include __DIR__ . '/../includes/header.php';
                     icon: 'success',
                     confirmButtonText: '查看结果'
                 }).then(() => {
-                    window.location.href = 'exam_result.php?exam_id=' + result.exam_id;
+                    window.location.href = 'quiz_result.php?quiz_id=' + result.quiz_id;
                 });
             } else {
                 throw new Error(result.error || '交卷失败');

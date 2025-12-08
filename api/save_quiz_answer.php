@@ -1,8 +1,8 @@
 <?php
-// api/save_exam_answer.php
+// api/save_quiz_answer.php
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../functions/auth.php';
-require_once __DIR__ . '/../functions/exam.php';
+require_once __DIR__ . '/../functions/quiz.php';
 
 header('Content-Type: application/json');
 
@@ -13,31 +13,31 @@ if (!Auth::isLoggedIn()) {
 }
 
 $data = json_decode(file_get_contents('php://input'), true);
-$examId = $data['exam_id'] ?? 0;
+$quizId = $data['quiz_id'] ?? 0;
 $questionId = $data['question_id'] ?? 0;
 $answer = $data['answer'] ?? '';
 
-if (!$examId || !$questionId) {
+if (!$quizId || !$questionId) {
     echo json_encode(['success' => false, 'error' => '参数错误']);
     exit;
 }
 
 try {
     // 检查是否有进行中的测验
-    if (!isset($_SESSION['current_exam']) || $_SESSION['current_exam']['exam_id'] != $examId) {
+    if (!isset($_SESSION['current_quiz']) || $_SESSION['current_quiz']['quiz_id'] != $quizId) {
         throw new Exception('测验会话不存在');
     }
     
     // 保存答案到session
-    $_SESSION['current_exam']['answers'][$questionId] = $answer;
+    $_SESSION['current_quiz']['answers'][$questionId] = $answer;
     
     // 更新进度
-    $answeredCount = count(array_filter($_SESSION['current_exam']['answers']));
+    $answeredCount = count(array_filter($_SESSION['current_quiz']['answers']));
     
     echo json_encode([
         'success' => true,
         'answered_count' => $answeredCount,
-        'total_questions' => count($_SESSION['current_exam']['questions'])
+        'total_questions' => count($_SESSION['current_quiz']['questions'])
     ]);
     
 } catch (Exception $e) {

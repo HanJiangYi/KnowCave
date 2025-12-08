@@ -2,8 +2,8 @@
 require_once __DIR__ . '/../functions/auth.php';
 Auth::requireLogin();
 
-$examId = $_GET['exam_id'] ?? 0;
-if (!$examId) {
+$quizId = $_GET['quiz_id'] ?? 0;
+if (!$quizId) {
     header("Location: dashboard.php");
     exit;
 }
@@ -40,7 +40,7 @@ include __DIR__ . '/../includes/header.php';
                             <div class="card bg-light">
                                 <div class="card-body">
                                     <h6 class="card-subtitle mb-2">测验ID</h6>
-                                    <h4 class="card-title">#<?php echo $examId; ?></h4>
+                                    <h4 class="card-title">#<?php echo $quizId; ?></h4>
                                 </div>
                             </div>
                         </div>
@@ -107,7 +107,7 @@ include __DIR__ . '/../includes/header.php';
 <script>
     // 5秒后自动跳转到统计页面
     setTimeout(() => {
-        window.location.href = 'stats.php?exam_id=<?php echo $examId; ?>';
+        window.location.href = 'stats.php?quiz_id=<?php echo $quizId; ?>';
     }, 5000);
 </script>
 
