@@ -35,15 +35,16 @@ CREATE TABLE IF NOT EXISTS questions (
 CREATE TABLE IF NOT EXISTS answer_records (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
+	quiz_id INTEGER DEFAULT 0,
     question_id INTEGER NOT NULL,
-    bank_id INTEGER NOT NULL,
+    bank_id INTEGER NOT NULL, -- 题库id
     user_answer TEXT,
     is_correct BOOLEAN,
     mode INTEGER NOT NULL, -- 1: 练习， 2: 测验
     time_spent INTEGER DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id),
-    FOREIGN KEY (question_id) REFERENCES questions (id),
+	FOREIGN KEY (question_id) REFERENCES questions (id),
     FOREIGN KEY (bank_id) REFERENCES question_banks (id)
 );
 
@@ -51,19 +52,21 @@ CREATE TABLE IF NOT EXISTS answer_records (
 CREATE TABLE IF NOT EXISTS quiz_sessions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
-    bank_id INTEGER NOT NULL,
+    bank_id INTEGER NOT NULL, -- 题库id
     start_time DATETIME DEFAULT CURRENT_TIMESTAMP,
     end_time DATETIME,
     time_limit INTEGER DEFAULT 1800, -- 30分钟=1800秒
     total_questions INTEGER DEFAULT 20,
     correct_count INTEGER DEFAULT 0,
+	score INTEGER DEFAULT 0,
     status INTEGER DEFAULT 1, -- 1: 进行中， 2: 已完成， 3: 超时
     FOREIGN KEY (user_id) REFERENCES users (id),
     FOREIGN KEY (bank_id) REFERENCES question_banks (id)
 );
 
 -- 创建索引
-CREATE INDEX IF NOT EXISTS idx_records_user_question ON answer_records (user_id, question_id, mode);
+CREATE INDEX IF NOT EXISTS idx_records_user_question ON answer_records (user_id, question_id);
 CREATE INDEX IF NOT EXISTS idx_records_created ON answer_records (user_id, bank_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_records_quiz ON answer_records(user_id, quiz_session_id);
 CREATE INDEX IF NOT EXISTS idx_questions_bank ON questions (bank_id, type);
 CREATE INDEX IF NOT EXISTS idx_quiz_sessions_user ON quiz_sessions (user_id, status);
