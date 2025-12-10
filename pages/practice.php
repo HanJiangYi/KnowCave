@@ -383,8 +383,8 @@ include __DIR__ . '/../includes/header.php';
         }
         
         // 显示用户答案和正确答案
-        userAnswer.textContent = '你选择了：' + (result.user_answer || '未选择');
-        correctAnswer.textContent = '正确答案是：' + result.correct_answer;
+        userAnswer.textContent = result.user_answer || '未答';
+        correctAnswer.textContent = result.correct_answer;
         
         // 显示解析
         if (result.analysis && result.analysis.trim() !== '') {

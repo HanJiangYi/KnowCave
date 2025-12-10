@@ -197,18 +197,14 @@ $pageTitle = "测验详情 - 知识洞穴";
         <div class="question-container" id="question-<?php echo $index + 1; ?>">
             <div class="d-flex justify-content-between align-items-start mb-3">
                 <h5>
-                    <span class="badge bg-light text-dark me-2"><?php echo $index + 1; ?></span>
                     第 <?php echo $index + 1; ?> 题 
                     <?php if ($record['is_correct'] == 1): ?>
                         <span class="badge bg-success ms-2">正确</span>
-                    <?php elseif ($record['user_answer_parsed'] === null): ?>
-                        <span class="badge bg-danger ms-2">未作答</span>
                     <?php else: ?>
                         <span class="badge bg-danger ms-2">错误</span>
                     <?php endif; ?>
                 </h5>
             </div>
-            
             <div class="mb-3 fs-5">
                 <span class="badge bg-light text-dark type-badge">
                         <?php 
@@ -276,7 +272,7 @@ $pageTitle = "测验详情 - 知识洞穴";
                         <h6 class="mb-2">你的答案：</h6>
                         <?php if ($record['user_answer_parsed'] === null): ?>
                             <p class="wrong-answer mb-0">
-                                <i class="fas fa-minus-circle me-2"></i>未作答
+                                <i class="fas fa-minus-circle me-2"></i>未答
                             </p>
                         <?php else: ?>
                             <div class="<?php echo $record['is_correct'] ? 'user-answer' : 'wrong-answer'; ?>">
@@ -316,7 +312,7 @@ $pageTitle = "测验详情 - 知识洞穴";
                             ?>
                         </p>
                     </div>
-					<div class="col-md-6">
+					<div class="col-md-12">
                         <h6 class="mb-2">解析：</h6>
                         <p>
                             <?php echo $record['analysis']; ?>
