@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../functions/auth.php';
 require_once __DIR__ . '/../functions/stats.php';
 require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../functions/quiz.php';
 
 Auth::requireLogin();
 

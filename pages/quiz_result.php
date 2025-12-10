@@ -1,116 +1,110 @@
 <?php
-require_once __DIR__ . '/../functions/auth.php';
-Auth::requireLogin();
+// pages/quiz_result.php - 修改为跳转到详情页面
 
-$quizId = $_GET['quiz_id'] ?? 0;
-if (!$quizId) {
-    header("Location: dashboard.php");
+session_start();
+require_once '../config/db.php';
+require_once '../functions/auth.php';
+
+if (!Auth::isLoggedIn()) {
+    header('Location: login.php');
     exit;
 }
 
-$pageTitle = '测验结果 - 知识洞天 KnowCave';
+// 检查是否有上次的测验结果
+if (!isset($_SESSION['last_quiz_result'])) {
+    header('Location: dashboard.php');
+    exit;
+}
 
-include __DIR__ . '/../includes/header.php';
+$quizResult = $_SESSION['last_quiz_result'];
+$pageTitle = "测验完成 - 知识洞穴";
 ?>
-
-<nav class="navbar navbar-light bg-light">
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <?php include '../includes/header.php'; ?>
+    <style>
+        .result-card {
+            max-width: 500px;
+            margin: 2rem auto;
+            text-align: center;
+        }
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            margin: 2rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: bold;
+            border: 10px solid;
+        }
+        .score-excellent {
+            background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
+            border-color: #96e6a1;
+            color: #2d5016;
+        }
+        .score-good {
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            border-color: #a1c4fd;
+            color: #1e3c72;
+        }
+        .score-average {
+            background: linear-gradient(135deg, #fccb90 0%, #d57eeb 100%);
+            border-color: #d57eeb;
+            color: #6a3093;
+        }
+        .score-poor {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            border-color: #ff9a9e;
+            color: #870000;
+        }
+    </style>
+</head>
+<body>
     <div class="container">
-        <a class="navbar-brand" href="dashboard.php">知识洞天 KnowCave</a>
-        <div>
-            <a href="logout.php" class="btn btn-sm btn-outline-secondary me-2" onclick="return confirm('确定要退出登录吗？')">退出</a>
-            <a href="dashboard.php" class="btn btn-sm btn-outline-primary">返回主菜单</a>
-        </div>
-    </div>
-</nav>
-
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card text-center mb-4">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">测验完成</h4>
-                </div>
-                <div class="card-body py-5">
-                    <div class="display-1 mb-4">🎉</div>
-                    <h2 class="card-title">测验提交成功！</h2>
-                    <p class="card-text text-muted">你的测验答卷已提交，成绩正在计算中...</p>
-                    
-                    <div class="row mt-4">
-                        <div class="col-md-3">
-                            <div class="card bg-light">
-                                <div class="card-body">
-                                    <h6 class="card-subtitle mb-2">测验ID</h6>
-                                    <h4 class="card-title">#<?php echo $quizId; ?></h4>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card bg-light">
-                                <div class="card-body">
-                                    <h6 class="card-subtitle mb-2">提交时间</h6>
-                                    <h4 class="card-title"><?php echo date('H:i'); ?></h4>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card bg-light">
-                                <div class="card-body">
-                                    <h6 class="card-subtitle mb-2">题目数量</h6>
-                                    <h4 class="card-title">20</h4>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card bg-light">
-                                <div class="card-body">
-                                    <h6 class="card-subtitle mb-2">测验日期</h6>
-                                    <h4 class="card-title"><?php echo date('m/d'); ?></h4>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-4">
-                        <p>系统正在批改你的试卷，详细结果将在稍后显示。</p>
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <div class="d-grid gap-2">
-                        <a href="dashboard.php" class="btn btn-primary">返回主菜单</a>
-                        <a href="stats.php" class="btn btn-outline-secondary">查看学习统计</a>
-                    </div>
-                </div>
+        <div class="result-card">
+            <h1 class="mb-4">测验完成！</h1>
+            
+            <?php
+            $scoreClass = 'score-poor';
+            if ($quizResult['score'] >= 90) $scoreClass = 'score-excellent';
+            elseif ($quizResult['score'] >= 70) $scoreClass = 'score-good';
+            elseif ($quizResult['score'] >= 60) $scoreClass = 'score-average';
+            ?>
+            
+            <div class="score-circle <?php echo $scoreClass; ?>">
+                <?php echo $quizResult['score']; ?>%
             </div>
             
-            <div class="card">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">📝 测验回顾</h5>
-                </div>
-                <div class="card-body">
-                    <p class="text-muted">测验详细结果和分析将在批改完成后显示在这里。</p>
-                    <p>你可以：</p>
-                    <ul>
-                        <li>查看每道题的正确答案和解析</li>
-                        <li>了解自己的知识薄弱点</li>
-                        <li>查看本次测验的时间使用情况</li>
-                        <li>与历史测验成绩对比</li>
-                    </ul>
-                </div>
+            <div class="mb-4">
+                <h3>正确率：<?php echo $quizResult['correct']; ?>/<?php echo $quizResult['total']; ?></h3>
             </div>
+            
+            <div class="alert alert-info mb-4">
+                <h5><i class="fas fa-info-circle"></i> 正在加载题目详情...</h5>
+                <p class="mb-0">请稍候，系统正在为您准备详细的答题分析。</p>
+            </div>
+            
+            <a href="quiz_detail.php?id=<?php echo $quizResult['quiz_id']; ?>" class="btn btn-primary btn-lg mb-3">
+                <i class="fas fa-eye"></i> 立即查看题目详情
+            </a>
+            <br>
+            <a href="dashboard.php" class="btn btn-outline-secondary">
+                <i class="fas fa-home"></i> 返回首页
+            </a>
         </div>
     </div>
-</div>
-
-<script>
-    // 5秒后自动跳转到统计页面
-    setTimeout(() => {
-        window.location.href = 'stats.php?quiz_id=<?php echo $quizId; ?>';
-    }, 5000);
-</script>
-
-<?php
-include __DIR__ . '/../includes/footer.php';
-?>
+    
+    <?php include '../includes/footer.php'; ?>
+    
+    <script>
+        // 5秒后自动跳转到详情页面
+        setTimeout(function() {
+            window.location.href = 'quiz_detail.php?id=<?php echo $quizResult['quiz_id']; ?>';
+        }, 5000);
+    </script>
+</body>
+</html>

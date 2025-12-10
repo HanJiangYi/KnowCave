@@ -1,4 +1,6 @@
 <?php
+// pages/quiz.php
+
 require_once __DIR__ . '/../functions/auth.php';
 require_once __DIR__ . '/../functions/quiz.php';
 require_once __DIR__ . '/../config/db.php';
@@ -121,11 +123,7 @@ include __DIR__ . '/../includes/header.php';
                             $isMarkedQ = in_array($questionId, $quiz['marked']);
                         ?>
                         <a href="?bank_id=<?php echo $bankId; ?>&question=<?php echo $i; ?>"
-                           class="question-nav-item 
-                                  <?php echo $isCurrent ? 'current' : ''; ?>
-                                  <?php echo $isAnswered ? 'answered' : ''; ?>
-                                  <?php echo $isMarkedQ ? 'marked' : ''; ?>">
-                            <?php echo $i; ?>
+                           class="question-nav-item <?php echo $isCurrent ? 'current' : ''; ?> <?php echo $isAnswered ? 'answered' : ''; ?> <?php echo $isMarkedQ ? 'marked' : ''; ?>"> <?php echo $i; ?>
                         </a>
                         <?php endfor; ?>
                     </div>
@@ -339,7 +337,13 @@ include __DIR__ . '/../includes/header.php';
         
         // 最后5分钟提示
         if (totalSeconds === 300) {
-            alert('测验还剩最后5分钟！');
+            Swal.fire({
+                icon: 'warning',
+                title: '时间提醒',
+                text: '测验还剩最后5分钟！',
+                timer: 3000,
+                showConfirmButton: false
+            });
         }
     }
     
@@ -509,27 +513,41 @@ include __DIR__ . '/../includes/header.php';
             }
         } catch (error) {
             console.error('标记题目失败:', error);
-            alert('标记失败，请重试');
+            Swal.fire({
+                icon: 'error',
+                title: '标记失败',
+                text: '请重试',
+                timer: 2000
+            });
         }
     }
     
     // 清除当前题目答案
     function clearAnswer() {
-        if (confirm('确定要清除本题的答案吗？')) {
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            const radios = document.querySelectorAll('input[type="radio"]');
-            
-            checkboxes.forEach(cb => {
-                cb.checked = false;
-                cb.closest('.option-item')?.classList.remove('selected');
-            });
-            radios.forEach(rb => {
-                rb.checked = false;
-                rb.closest('.option-item')?.classList.remove('selected');
-            });
-            
-            saveAnswer();
-        }
+        Swal.fire({
+            title: '确认清除',
+            text: '确定要清除本题的答案吗？',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: '确认清除',
+            cancelButtonText: '取消'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+                const radios = document.querySelectorAll('input[type="radio"]');
+                
+                checkboxes.forEach(cb => {
+                    cb.checked = false;
+                    cb.closest('.option-item')?.classList.remove('selected');
+                });
+                radios.forEach(rb => {
+                    rb.checked = false;
+                    rb.closest('.option-item')?.classList.remove('selected');
+                });
+                
+                saveAnswer();
+            }
+        });
     }
     
     // 题目导航
@@ -561,7 +579,14 @@ include __DIR__ . '/../includes/header.php';
     // 交卷
     function submitQuiz(auto = false) {
         if (auto) {
-            doSubmitQuiz();
+            Swal.fire({
+                title: '时间到！',
+                text: '测验时间已结束，正在自动交卷...',
+                icon: 'info',
+                showConfirmButton: false,
+                allowOutsideClick: false
+            });
+            setTimeout(doSubmitQuiz, 1000);
         } else {
             // 更新计数
             document.getElementById('answeredCount').textContent = quizConfig.answeredCount;
@@ -608,11 +633,12 @@ include __DIR__ . '/../includes/header.php';
                 
                 Swal.fire({
                     title: '交卷成功！',
-                    text: '得分: ' + result.score + '%，正确: ' + result.correct + '/' + result.total,
+                    html: `得分: <strong> ` + result.score + `<\/strong><br>正确: ` + result.correct + `\/` + result.total,
                     icon: 'success',
                     confirmButtonText: '查看结果'
                 }).then(() => {
-                    window.location.href = 'quiz_result.php?quiz_id=' + result.quiz_id;
+                    // 跳转到新的详情页面
+                    window.location.href = 'quiz_detail.php?id=' + result.quiz_id;
                 });
             } else {
                 throw new Error(result.error || '交卷失败');
@@ -621,7 +647,7 @@ include __DIR__ . '/../includes/header.php';
             console.error('交卷错误详情:', error);
             Swal.fire({
                 title: '交卷失败',
-                text: '网络错误，请重试。如果问题持续存在，请联系管理员。',
+                text: error.message || '网络错误，请重试。如果问题持续存在，请联系管理员。',
                 icon: 'error',
                 confirmButtonText: '重试'
             }).then(() => {
