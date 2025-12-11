@@ -225,7 +225,7 @@ include __DIR__ . '/../includes/header.php';
                                 ?>
                                 <tr>
                                     <td><?php echo date('m/d H:i', $startTime); ?></td>
-                                    <td><?php echo htmlspecialchars($quiz['bank_name']); ?></td>
+                                    <td><a href="quiz_detail.php?id=<?php echo $quiz['id']; ?>"><?php echo htmlspecialchars($quiz['bank_name']); ?></a></td>
                                     <td><?php echo $quiz['total_questions']; ?></td>
                                     <td>
                                         <?php echo $quiz['correct_count']; ?>

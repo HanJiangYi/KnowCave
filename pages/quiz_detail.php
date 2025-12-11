@@ -136,11 +136,8 @@ $pageTitle = "测验详情 - 知识洞穴";
             <div class="d-flex justify-content-between align-items-center">
                 <h2 class="mb-0">测验详情</h2>
                 <div>
-                    <a href="dashboard.php" class="btn btn-outline-secondary">
-                        <i class="fas fa-home"></i> 返回首页
-                    </a>
                     <a href="stats.php" class="btn btn-outline-primary ms-2">
-                        <i class="fas fa-chart-bar"></i> 统计
+                        <i class="fas fa-chart-bar"></i> 返回学习统计
                     </a>
                 </div>
             </div>
